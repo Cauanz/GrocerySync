@@ -7,13 +7,54 @@ function App() {
 
   const [items, setItems] = useState([]);
   const [newItem, setNewItem] = useState('');
+  const [completedItems, setCompletedItems] = useState(0);
 
-  const createItem = (e) => {
-    e.preventDefault();
+  const createItem = () => {
+    if(newItem !== ''){
+      const id = items.length + 1;
+      setItems((prev) => [
+        ...prev,
+        {
+          id: id,
+          item: newItem,
+          completed: false,
+        },
+      ]);
+      setNewItem("");
+    } else {
+      alert('Digite um item para adicionar a lista');
+    }
+  };
 
-    if(newItem.trim() !== ''){
-      setItems([...items, newItem]);
-      setNewItem('');
+  function handleCompletedItem(id) {
+    const updatedItems = items.map(item => {
+      if (item.id === id) {
+        return {
+          ...item,
+          completed: !item.completed
+        };
+      }
+      return item;
+    });
+    setItems(updatedItems);
+
+    const item = updatedItems.find((item) => item.id === id);
+    if (item) {
+      if (item.completed) {
+        setCompletedItems(completedItems + 1);
+      } else {
+        setCompletedItems(completedItems - 1);
+      }
+  }
+}
+
+  const removeItem = (id) => {
+    const updatedItems = items.filter((item) => item.id !== id);
+    setItems(updatedItems);
+
+    const completedItem = items.find((item) => item.id === id);
+    if(completedItem && completedItem.completed) {
+      setCompletedItems(completedItems - 1);
     }
   }
 
@@ -23,9 +64,9 @@ function App() {
       <main>
         <div className="content">
 
-          <form action="#" className="addItem" onSubmit={createItem}>
-            <input type="text" name="item" id="item" placeholder='Adicione um novo item' />
-            <button type="submit" >Criar<img src="../plus-circle-light.svg" alt="plus-circle" /></button>
+          <form action="#" className="addItem" onSubmit={(e) => { e.preventDefault(); createItem(); }} >
+            <input type="text" name="TextItem" id="TextItem" placeholder='Adicione um novo item' value={newItem} onChange={(e) => setNewItem(e.target.value)} />
+            <button type="submit" className='CreateButton'>Criar<img src="../plus-circle-light.svg" alt="plus-circle" /></button>
           </form>
 
           <div className="resumoCompras">
@@ -35,17 +76,22 @@ function App() {
             </div>
             <div className="concluidos">
               <p className="concluidosText" >Concluídas</p>
-              <span>0</span>
+              <span>{completedItems} de {items.length}</span>
             </div>
           </div>
           
                 {items.length > 0 ? (
           <ul className="items">
+
             {items.map((item, index) => (
-              <li key={index}>
-                <input type="checkbox" name="item" id="item" />
-                <span>{item}</span>
-                <button>Remover<img src="../trash-light.svg" alt="trash" /></button>
+              <li key={index} className='Item'>
+
+                  <input type="checkbox" className="completedItem" checked={item.completed} onChange={() => handleCompletedItem(item.id)} />
+
+                <span>{item.item}</span>
+                
+                <button className='Remove' onClick={() => removeItem(item.id)}><img src="../trash-light.svg" alt="trash" /></button>
+
               </li>
             ))}
           </ul>
