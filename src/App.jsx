@@ -11,7 +11,9 @@ function App() {
 
   const createItem = () => {
     if(newItem !== ''){
+
       const id = items.length + 1;
+
       setItems((prev) => [
         ...prev,
         {
@@ -21,6 +23,7 @@ function App() {
         },
       ]);
       setNewItem("");
+
     } else {
       alert('Digite um item para adicionar a lista');
     }
@@ -57,6 +60,7 @@ function App() {
       setCompletedItems(completedItems - 1);
     }
   }
+
 
   return (
     <>
