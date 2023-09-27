@@ -15,11 +15,11 @@ export function Header() {
          <h1>GrocerySync</h1>
 
          <div className="user">
-            <Link to={"/login"} ><button className="username" onClick={toggleMenu}><img src="./profile-circle.svg" alt="" /></button></Link>
+         <button className="username" onClick={toggleMenu}><img src="./profile-circle.svg" alt="" /></button>
             {menu && (
                <ul className='menu'>
-                  <li><a href="#">Profile</a></li>
-                  <li><a href="#">Logout</a></li>
+                  {/* <Link to={"/userInfo"} ></Link><li><a href="#">Profile</a></li></Link> */}
+                  <Link to={"/login"} ><li><a href="#">Logout</a></li></Link>
                </ul>
             )}
          </div>

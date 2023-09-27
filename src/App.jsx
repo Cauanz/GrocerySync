@@ -1,4 +1,7 @@
 import { Header } from './components/HeaderComponent/Header'
+import { auth } from './firebase/firebase';
+import { collection, addDoc } from "firebase/firestore";
+import db from './firebase/firebase'
 
 import './App.css'
 import { useState } from 'react'
@@ -9,7 +12,7 @@ function App() {
   const [newItem, setNewItem] = useState('');
   const [completedItems, setCompletedItems] = useState(0);
 
-  const createItem = () => {
+  const createItem = async () => {
     if(newItem !== ''){
 
       const id = items.length + 1;
@@ -23,9 +26,6 @@ function App() {
         },
       ]);
       setNewItem("");
-
-    } else {
-      alert('Digite um item para adicionar a lista');
     }
   };
 

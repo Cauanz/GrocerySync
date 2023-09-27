@@ -24,9 +24,9 @@ header {
 
 main {
   background-color: #1A1A1A;
-  height: 100vh;
   display: flex;
   justify-content: center;
+  flex: 1;
 }
 
 .addItem {
@@ -149,6 +149,7 @@ main img {
   background-color: #333333;
   padding: 10px;
   border-radius: 20px;
+  margin: 10px;
 }
 
 .Item > input {
@@ -156,6 +157,7 @@ main img {
   height: 30px;
   clip-path: circle(46% at 50% 50%);
   background-color: #1E9F51;
+  cursor: pointer;
 }
 
 .Item > input:checked {
@@ -171,6 +173,7 @@ main img {
   display: flex;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
 }
 
 .Remove img {

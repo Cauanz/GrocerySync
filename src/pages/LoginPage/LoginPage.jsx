@@ -1,6 +1,6 @@
 import './LoginPage.css'
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from '../../firebase/app';
+import { auth } from '../../firebase/firebase';
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 
@@ -14,9 +14,12 @@ export function LoginPage() {
    const handleSubmit = async (e) => {
       e.preventDefault()
 
-      console.log(email, password)
+      /* console.log(email, password) */
 
-      await signInWithEmailAndPassword(auth, email, password)
+      if(email === '' || password === '') {
+         alert('Preencha todos os campos')
+      } else {
+         await signInWithEmailAndPassword(auth, email, password)
          .then((userCredential) => {
             // Signed in
 
@@ -28,7 +31,18 @@ export function LoginPage() {
          .catch((error) => {
             console.log(error.code);
             console.log(error.message);
+
+            if(error.code == 'auth/invalid-password') {
+               alert('Senha incorreta')
+            } else if(error.code == 'auth/user-not-found') {
+               alert('Usuário não encontrado')
+            } else if(error.code == 'auth/invalid-email') {
+               alert('Usuário não encontrado')
+            } else if(error.code == 'auth/invalid-login-credentials'){
+               alert('Usuário ou senha incorretos')
+            }
          });
+      }
    }
 
 
@@ -41,8 +55,8 @@ export function LoginPage() {
             <div className="right">
             <form>
                <h1>Login</h1>
-               <input type="text" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
-               <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
+               <input className='Email' type="text" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+               <input className='Password' type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)}required />
                <button type="submit" onClick={handleSubmit}>Login</button>
 
                <div className="otherLoginWays">

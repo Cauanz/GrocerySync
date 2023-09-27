@@ -1,6 +1,8 @@
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth } from '../../firebase/app';
+import { auth } from '../../firebase/firebase';
+import { collection, addDoc } from "firebase/firestore";
 import { useState } from 'react';
+import { getFirestore } from "firebase/firestore";
 import { useNavigate, Link } from 'react-router-dom';
 import './RegisterPage.css'
 
@@ -9,26 +11,38 @@ export function RegisterPage() {
 
    const navigate = useNavigate()
 
+   const [name, setName] = useState('') /* NEW */
    const [email, setEmail] = useState('')
    const [password, setPassword] = useState('')
 
    const handleSubmit = async (e) => {
       e.preventDefault()
 
-      console.log(email, password)
+      console.log(name, email, password)
 
       await createUserWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
          // Signed in 
          const user = userCredential.user;
-         console.log(user)
          navigate('/')
       })
       .catch((error) => {
-         console.log(error.code);
-         console.log(error.message)
-   });
+         console.error(error.code, error.message)
+      });
+      const db = getFirestore();
+
+      try {
+         // Add a new document with a generated id.
+         const docRef = await addDoc(collection(db, "users"), {
+            displayName: 'cauan'
+         });
+         console.log("Document written with ID: ", docRef.id);
+         } catch (error) {
+            console.error("Error adding document: ", error);
+         }
+
    }
+
    return (
       <div className="register">
          <div className="container">
@@ -38,6 +52,7 @@ export function RegisterPage() {
             <div className="right">
             <form>
                <h1>Register</h1>
+               <input type="text" placeholder="Nome" value={name} onChange={(e) => {setName(e.target.value)}}  />
                <input type="text" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
                <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
                <button type="submit" onClick={handleSubmit}>Register</button>

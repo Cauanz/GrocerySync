@@ -1,7 +1,8 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-/* import { getAnalytics } from "firebase/analytics"; */
+import { getFirestore } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
+
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -9,17 +10,18 @@ import { getAuth } from "firebase/auth";
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
   apiKey: "AIzaSyD9RnANAlYNO652Ej1jTbraOIuIis4xAVQ",
-  authDomain: "grocerysync-6ce60.firebaseapp.com",
-  projectId: "grocerysync-6ce60",
-  storageBucket: "grocerysync-6ce60.appspot.com",
-  messagingSenderId: "96314675202",
-  appId: "1:96314675202:web:f79e8e2450df9068b4171b",
-  measurementId: "G-4XTJPTPB8E"
+  authDomain: import.meta.REACT_APP_AUTHDOMAIN,
+  projectId: import.meta.REACT_APP_PROJECTID,
+  storageBucket: import.meta.REACT_APP_STORAGEBUCKET,
+  messagingSenderId: import.meta.REACT_APP_MESSAGINGSENDERID,
+  appId: import.meta.REACT_APP_APPID,
+  measurementId: import.meta.REACT_APP_MEASUREMENTID
 };
 
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-/* const analytics = getAnalytics(app); */
-export const auth = getAuth(app);
 export default app;
+
+export const auth = getAuth(app);
+export const db = getFirestore(app);
