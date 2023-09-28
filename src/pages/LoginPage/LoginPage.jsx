@@ -1,8 +1,7 @@
 import './LoginPage.css'
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from '../../firebase/firebase';
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { supabase } from '../../supabase/client';
 
 export function LoginPage() {
 
@@ -14,34 +13,26 @@ export function LoginPage() {
    const handleSubmit = async (e) => {
       e.preventDefault()
 
-      /* console.log(email, password) */
-
       if(email === '' || password === '') {
          alert('Preencha todos os campos')
       } else {
-         await signInWithEmailAndPassword(auth, email, password)
-         .then((userCredential) => {
-            // Signed in
 
-            const user = userCredential.user;
-            navigate('/')
-            console.log(user)
-
-         })
-         .catch((error) => {
-            console.log(error.code);
-            console.log(error.message);
-
-            if(error.code == 'auth/invalid-password') {
-               alert('Senha incorreta')
-            } else if(error.code == 'auth/user-not-found') {
-               alert('Usuário não encontrado')
-            } else if(error.code == 'auth/invalid-email') {
-               alert('Usuário não encontrado')
-            } else if(error.code == 'auth/invalid-login-credentials'){
-               alert('Usuário ou senha incorretos')
+         try {
+            const { data, error } = await supabase.auth.signInWithPassword({
+               email: email,
+               password: password,
+            });
+         
+            if (error) {
+               console.error(error.message)
+               return
             }
-         });
+            console.log(data.user.id)
+         
+            navigate('/')
+            } catch (error) {
+            console.error(error.message)
+            }
       }
    }
 

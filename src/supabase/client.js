@@ -1,4 +1,4 @@
-// Import the functions you need from the SDKs you need
+/* // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
@@ -24,4 +24,11 @@ const app = initializeApp(firebaseConfig);
 export default app;
 
 export const auth = getAuth(app);
-export const db = getFirestore(app);
+export const db = getFirestore(app); */
+
+import { createClient } from "@supabase/supabase-js";
+
+const projectURL = 'https://gpxggbqboqcsphjyyhwz.supabase.co';
+const projectKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdweGdnYnFib3Fjc3Boanl5aHd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE2OTU4MjM3NTIsImV4cCI6MjAxMTM5OTc1Mn0.dFCsZzgJPEQo36L6LeZk1GoHUaRQxCz5cRUdL-uRpY8';
+
+export const supabase = createClient(projectURL, projectKey);

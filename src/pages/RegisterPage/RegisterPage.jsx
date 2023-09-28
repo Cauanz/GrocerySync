@@ -1,8 +1,11 @@
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth } from '../../firebase/firebase';
+/* import { createUserWithEmailAndPassword } from "firebase/auth";
+import { auth } from '../../supabase/client';
 import { collection, addDoc } from "firebase/firestore";
+import { getFirestore } from "firebase/firestore"; */
+
+import { supabase } from '../../supabase/client';
+
 import { useState } from 'react';
-import { getFirestore } from "firebase/firestore";
 import { useNavigate, Link } from 'react-router-dom';
 import './RegisterPage.css'
 
@@ -14,33 +17,45 @@ export function RegisterPage() {
    const [name, setName] = useState('') /* NEW */
    const [email, setEmail] = useState('')
    const [password, setPassword] = useState('')
-
+   
    const handleSubmit = async (e) => {
       e.preventDefault()
-
-      console.log(name, email, password)
-
-      await createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-         // Signed in 
-         const user = userCredential.user;
-         navigate('/')
-      })
-      .catch((error) => {
-         console.error(error.code, error.message)
-      });
-      const db = getFirestore();
-
+   
       try {
-         // Add a new document with a generated id.
-         const docRef = await addDoc(collection(db, "users"), {
-            displayName: 'cauan'
+         const { data: authData, error: authError } = await supabase.auth.signUp({
+         email: email,
+         password: password,
          });
-         console.log("Document written with ID: ", docRef.id);
-         } catch (error) {
-            console.error("Error adding document: ", error);
-         }
 
+         if (authError) {
+               console.error('Erro ao registrar usuário:', authError.message);
+            } else {
+               console.log('Usuário registrado com sucesso:', authData);
+            }
+
+            const userId = authData.user.id;
+
+         const { data: userData, error: userError } = await supabase
+         .from('users')
+         .insert([
+            {id: userId ,userName: name, email: email, password: password},
+         ])
+         .select();
+      
+         if (userError) {
+         console.error('Erro ao inserir no banco de dados:', userError.message);
+         } else {
+         console.log('Dados inseridos no banco de dados:', userData);
+         }
+      
+
+      
+      } catch (error) {
+         console.error('Erro geral:', error.message);
+      }
+
+
+      navigate('/login')
    }
 
    return (
