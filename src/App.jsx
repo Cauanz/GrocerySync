@@ -1,83 +1,30 @@
 import { Header } from './components/HeaderComponent/Header'
-/* import { auth } from './firebase/firebase';
-import { collection, addDoc } from "firebase/firestore";
-import db from './firebase/firebase' */
-
 import './App.css'
-import { useState } from 'react'
+import { useState } from 'react';
 
 import { supabase } from '../src/supabase/client';
 
+
 function App() {
+
 
   const [items, setItems] = useState([]);
   const [newItem, setNewItem] = useState('');
   const [completedItems, setCompletedItems] = useState(0);
 
-/*   const createItem = async () => {
-    if (newItem !== '') {
-      const newItemData = {
-        id: items.length,
-        item: newItem,
-        completed: false,
-      };
 
-      const { data: { user } } = await supabase.auth.getUser()
-      console.log(user);
-  
-      setItems((prev) => [
-        ...prev,
-        newItemData,
-      ]);
-      setNewItem('');
-
-      if (user) {
-        try {
-          // Obtenha o usuário atual do banco de dados
-          const { data: userData, error: userError } = await supabase
-            .from('users')
-            .select()
-            .eq('id', user.id)
-            .single();
-  
-          if (userError) {
-            console.error('Erro ao obter o usuário:', userError.message);
-            return;
-          }
-  
-          // Obtenha a lista atual do usuário
-          const currentList = userData.list || [];
-  
-          // Adicione o novo item à lista
-          currentList.push(newItemData);
-  
-          // Atualize o registro do usuário com a lista atualizada
-          const { data: updateData, error: updateError } = await supabase
-            .from('users')
-            .update({ list: currentList })
-            .eq('id', user.id);
-  
-          if (updateError) {
-            console.error('Erro ao atualizar o usuário:', updateError.message);
-          } else {
-            console.log('Item criado e atualizado com sucesso:', updateData);
-          }
-        } catch (error) {
-          console.error('Erro ao criar o item:', error.message);
-        }
-      }
-    }
-  }; */
-
-  const create = () => {
-    createLocalItem();
+  function create() {    
     createDBItem();
   }
 
   function completedItem(index) {
-    updateLocalItem(index);
     updateDBItem(index);
   }
+
+  function removedItem(index) {
+    removeDBItem(index);
+  }
+
 
   const createLocalItem = () => {
     if (newItem !== '') {
@@ -137,6 +84,7 @@ function App() {
           } else {
             console.log('Item criado e atualizado com sucesso:', updateData);
           }
+          createLocalItem();
         } catch (error) {
           console.error('Erro ao criar o item:', error.message);
         }
@@ -145,9 +93,9 @@ function App() {
   };
 
 
-/*   async function handleCompletedItem(index) {
+  const updateLocalItem = (id) => {
     const updatedItems = items.map(item => {
-      if (item.id === index) {
+      if (item.id === id) {
         return {
           ...item,
           completed: !item.completed
@@ -157,81 +105,7 @@ function App() {
     });
     setItems(updatedItems);
 
-
-    const item = updatedItems.find((item) => item.id === index);
-    if (item) {
-      if (item.completed) {
-        setCompletedItems(completedItems + 1);
-      } else {
-        setCompletedItems(completedItems - 1);
-      }
-    }
-
-
-      const { data: { user } } = await supabase.auth.getUser()
-
-      try {
-        const { data: userData, error: userError } = await supabase
-        .from('users')
-        .select()
-        .eq('id', user.id)
-        .single();
-  
-        if (userError) {
-          console.error('Erro ao obter o usuário:', userError.message);
-          return;
-        }
-
-        const currentList = userData.list || [];
-        console.log(item.completed);
-
-        const itemFound = currentList.find(item => item.id === index);
-          itemFound.completed = !itemFound.completed;
-
-          const updatedList = items.map(item => {
-            if (item.id === index) {
-              return {
-                ...item,
-                completed: !item.completed
-              };
-            }
-            return item;
-          });
-        
-        const { data, error } = await supabase
-        .from('users')
-        .update({
-          // Atualize a lista no banco de dados para refletir o novo status do item
-          list: updatedList,
-        })
-        .eq('id', user.id);
-      
-      if (error) {
-        console.error('Erro ao atualizar o item:', error.message);
-      } else {
-        console.log('Item atualizado com sucesso:', data);
-      }
-
-        console.log(itemFound);
-        
-      } catch (err) {
-        console.log("Erro no SUPABASE DATABASE COMPLETED", err);
-      }
-} */
-
-  const updateLocalItem = (index) => {
-    const updatedItems = items.map(item => {
-      if (item.id === index) {
-        return {
-          ...item,
-          completed: !item.completed
-        };
-      }
-      return item;
-    });
-    setItems(updatedItems);
-
-    const item = updatedItems.find((item) => item.id === index);
+    const item = updatedItems.find((item) => item.id === id);
     if (item) {
       if (item.completed) {
         setCompletedItems(completedItems + 1);
@@ -241,7 +115,7 @@ function App() {
     }
   };
 
-  const updateDBItem = async (index) => {
+  const updateDBItem = async (id) => {
     const { data: { user } } = await supabase.auth.getUser();
   
     try {
@@ -258,13 +132,13 @@ function App() {
   
       const currentList = userData.list || [];
   
-      const itemFound = currentList.find(item => item.id === index);
+      const itemFound = currentList.find(item => item.id === id);
       itemFound.completed = !itemFound.completed;
 
       console.log(itemFound);
   
       const updatedList = currentList.map(item => {
-        if (item.id === index) {
+        if (item.id === id) {
           return {
             ...item,
             completed: item.completed
@@ -286,7 +160,7 @@ function App() {
       } else {
         console.log('Item atualizado com sucesso:', data);
       }
-    
+      updateLocalItem(id);
     } catch (err) {
       console.log("Erro no SUPABASE DATABASE COMPLETED", err);
     }
@@ -300,6 +174,48 @@ function App() {
     const completedItem = items.find((item) => item.id === id);
     if(completedItem && completedItem.completed) {
       setCompletedItems(completedItems - 1);
+    }
+  }
+
+  const removeDBItem = async (id) => {
+    const { data: { user } } = await supabase.auth.getUser();
+  
+    try {
+      const { data: userData, error: userError } = await supabase
+        .from('users')
+        .select()
+        .eq('id', user.id)
+        .single();
+  
+      if (userError) {
+        console.error('Erro ao obter o usuário:', userError.message);
+        return;
+      }
+  
+      const currentList = userData.list || [];
+  
+      const itemIndex = currentList.findIndex(item => item.id === id);
+
+      if (itemIndex !== -1) {
+        currentList.splice(itemIndex, 1);
+      }
+
+      const { data, error } = await supabase
+        .from('users')
+        .update({
+          // Atualize a lista no banco de dados para refletir o novo status do item removido
+          list: currentList,
+        })
+        .eq('id', user.id);
+
+      if (error) {
+        console.error('Erro ao atualizar o item:', error.message);
+      } else {
+        console.log('Item atualizado com sucesso:', data);
+      }
+      removeItem(id);
+    } catch (err) {
+      console.log("Erro no SUPABASE DATABASE COMPLETED", err);
     }
   }
 
@@ -331,11 +247,11 @@ function App() {
             {items.map((item, index) => (
               <li key={index} className='Item'>
 
-                  <input type="checkbox" className="completedItem" checked={item.completed} onChange={() => completedItem(index)} />
+                  <input type="checkbox" className="completedItem" checked={item.completed} onChange={() => completedItem(item.id)} />
 
                 <span>{item.item}</span>
                 
-                <button className='Remove' onClick={() => removeItem(item.id)}><img src="../trash-light.svg" alt="trash" /></button>
+                <button className='Remove' onClick={() => removedItem(item.id)}><img src="../trash-light.svg" alt="trash" /></button>
 
               </li>
             ))}

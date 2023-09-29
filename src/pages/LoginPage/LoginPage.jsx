@@ -10,13 +10,21 @@ export function LoginPage() {
    const [email, setEmail] = useState('')
    const [password, setPassword] = useState('')
 
+   const needPassword = () => {
+      const EmailField = document.getElementsByClassName('EmailField')[0];
+
+      EmailField.style.border = '2px solid red';
+   }
+
+
+
    const handleSubmit = async (e) => {
       e.preventDefault()
 
       if(email === '' || password === '') {
          alert('Preencha todos os campos')
+         needPassword()
       } else {
-
          try {
             const { data, error } = await supabase.auth.signInWithPassword({
                email: email,
@@ -46,7 +54,8 @@ export function LoginPage() {
             <div className="right">
             <form>
                <h1>Login</h1>
-               <input className='Email' type="text" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+               <input className='EmailField' type="text" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+               <p id='NeedEmailText'>Email não pode ficar vázio</p>
                <input className='Password' type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)}required />
                <button type="submit" onClick={handleSubmit}>Login</button>
 
