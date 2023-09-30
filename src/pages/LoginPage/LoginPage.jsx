@@ -1,49 +1,51 @@
 import './LoginPage.css'
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
+
 import { supabase } from '../../supabase/client';
 
 export function LoginPage() {
 
    const navigate = useNavigate()
 
-   const [email, setEmail] = useState('')
-   const [password, setPassword] = useState('')
+   const [isLoading, setIsLoading] = useState(false);
 
-   const needPassword = () => {
-      const EmailField = document.getElementsByClassName('EmailField')[0];
+   const formik = useFormik({
+   initialValues: {
+      email: '',
+      password: '',
+   },
+   validationSchema: Yup.object({
+      email: Yup
+      .string()
+      .email('Email inválido')
+      .required('Campo obrigatório'),
 
-      EmailField.style.border = '2px solid red';
-   }
+      password: Yup
+      .string()
+      .required('Campo obrigatório'),
+   }),
 
-
-
-   const handleSubmit = async (e) => {
-      e.preventDefault()
-
-      if(email === '' || password === '') {
-         alert('Preencha todos os campos')
-         needPassword()
+   onSubmit: async (values) => {
+      try {
+      setIsLoading(true);
+         const { data, error } = await supabase.auth.signInWithPassword({
+         email: values.email,
+         password: values.password,
+      });
+      setIsLoading(false);
+      if (error) {
+         alert(error.message);
       } else {
-         try {
-            const { data, error } = await supabase.auth.signInWithPassword({
-               email: email,
-               password: password,
-            });
-         
-            if (error) {
-               console.error(error.message)
-               return
-            }
-            console.log(data.user.id)
-         
-            navigate('/')
-            } catch (error) {
-            console.error(error.message)
-            }
+         navigate('/');
       }
-   }
-
+      } catch (error) {
+      console.error(error.message);
+      }
+   },
+   });
 
    return (
       <div className="login">
@@ -52,12 +54,31 @@ export function LoginPage() {
                <h2>Simple and Fast</h2>
             </div>
             <div className="right">
-            <form>
+            <form onSubmit={formik.handleSubmit}>
                <h1>Login</h1>
-               <input className='EmailField' type="text" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-               <p id='NeedEmailText'>Email não pode ficar vázio</p>
-               <input className='Password' type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)}required />
-               <button type="submit" onClick={handleSubmit}>Login</button>
+               <input 
+               className={formik.touched.email && formik.errors.email ? 'error' : ''}
+               type="text"
+               placeholder="Email"
+               {...formik.getFieldProps('email')}
+               />
+               {formik.touched.email && formik.errors.email ? (
+               <div className="errorMessage">{formik.errors.email}</div>
+               ) : null}
+
+               <input 
+               className={formik.touched.password && formik.errors.password ? 'error' : ''}
+               type="password"
+               placeholder="Password"
+               {...formik.getFieldProps('password')}
+               />
+               {formik.touched.password && formik.errors.password ? (
+               <div className="errorMessage">{formik.errors.password}</div>
+               ) : null}
+
+               <button type="submit" disabled={isLoading}>
+               {isLoading ? 'Carregando...' : 'Entrar'}
+               </button>
 
                <div className="otherLoginWays">
                   <p>Or login with</p>

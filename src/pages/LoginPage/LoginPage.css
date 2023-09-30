@@ -73,9 +73,32 @@ form h1 {
 .right input {
    width: 100%;
    padding: 0.5rem;
-   margin: 0.5rem 0;
+   margin: 0.5rem 0 0 0;
    border: none;
    border-radius: 5px;
+}
+
+#NeedEmailText {
+   display: none;
+   width: 100%;
+   color: red;
+   font-size: 0.8rem;
+   text-align: left;
+}
+
+.errorMessage {
+   width: 100%;
+   color: red;
+   font-size: 0.8rem;
+   text-align: left;
+}
+
+#NeedPasswordText {
+   display: none;
+   width: 100%;
+   color: red;
+   font-size: 0.8rem;
+   text-align: left;
 }
 
 .right button {
@@ -120,4 +143,23 @@ form h1 {
 
 .RedirectRegister {
    font-size: 15px;
+}
+
+@media (max-width: 768px) {
+   .container {
+      width: 80%;
+      height: 80%;
+      grid-template-columns: 1fr;
+   }
+
+   .right input {
+      width: 100%;
+      padding: 1rem;
+      font-size: 1.2rem;
+   }
+
+   .right button {
+      padding: 1rem;
+      font-size: 1.2rem;
+   }
 }

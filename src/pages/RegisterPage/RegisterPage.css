@@ -14,7 +14,7 @@
    background-color: #252525;
 }
 
-.container {
+.register .container {
    display: grid;
    grid-template-columns: 1fr 1fr;
    height: 60%;
@@ -116,4 +116,23 @@
    display: flex;
    align-items: center;
    justify-content: center;
+}
+
+@media (max-width: 768px) {
+   .register .container {
+      width: 80%;
+      height: 80%;
+      grid-template-columns: 1fr;
+   }
+
+   .register .right input {
+      width: 100%;
+      padding: 1rem;
+      font-size: 1.2rem;
+   }
+
+   .register .right button {
+      padding: 1rem;
+      font-size: 1.2rem;
+   }
 }
