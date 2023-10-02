@@ -1,6 +1,6 @@
 import { Header } from './components/HeaderComponent/Header'
 import './App.css'
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { supabase } from '../src/supabase/client';
 
@@ -11,6 +11,49 @@ function App() {
   const [items, setItems] = useState([]);
   const [newItem, setNewItem] = useState('');
   const [completedItems, setCompletedItems] = useState(0);
+
+
+  useEffect(() => {
+    if(items.length === 0) {
+
+      const getListItems = async () => {
+
+        // Obtenha o usuário atual do banco de dados
+        const { data: { user } } = await supabase.auth.getUser();
+
+        /* console.log(user); */ // Verificação para fins de testes
+    
+      if (user) { // Se o usuário estiver conectado ele irá executar o código abaixo
+        try {
+
+            // Obtenha o usuário atual do banco de dados
+            const { data: userData, error: userError } = await supabase
+              .from('users')
+              .select()
+              .eq('id', user.id)
+              .single();
+    
+            if (userError) {
+              console.error('Erro ao obter o usuário:', userError.message);
+              return;
+            }
+    
+
+            // Obtenha a lista atual do usuário
+            const currentList = userData.list || [];
+
+            /* console.log(currentList); */ // Verificação para fins de testes / se a lista é retornada corretamente
+
+            setItems(currentList);
+
+        } catch (error) {
+          console.error('Erro ao recuperar a lista:', error.message);
+        }
+      }
+    }
+    getListItems();
+    }
+  }, []);
 
 
   function create() {    

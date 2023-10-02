@@ -12,6 +12,8 @@ export function LoginPage() {
 
    const [isLoading, setIsLoading] = useState(false);
 
+   const overlay = document.querySelector('.overlay');
+
    const formik = useFormik({
    initialValues: {
       email: '',
@@ -31,15 +33,22 @@ export function LoginPage() {
    onSubmit: async (values) => {
       try {
       setIsLoading(true);
+         // eslint-disable-next-line no-unused-vars
          const { data, error } = await supabase.auth.signInWithPassword({
          email: values.email,
          password: values.password,
       });
-      setIsLoading(false);
+      
       if (error) {
          alert(error.message);
       } else {
-         navigate('/');
+         setIsLoading(false);
+         overlay.style.display = 'flex';
+
+         setTimeout(() => {
+            navigate('/');
+         }, 1000);
+
       }
       } catch (error) {
       console.error(error.message);
@@ -50,6 +59,15 @@ export function LoginPage() {
    return (
       <div className="login">
          <div className="container">
+
+         <div className="overlay">
+            <div className="overlay-content">
+               <h2>Login Bem-sucedido</h2>
+               <p>Seja bem vindo</p>
+               <img src="./system-outline-31-check.gif" alt="" />
+            </div>
+         </div>
+
             <div className="left">
                <h2>Simple and Fast</h2>
             </div>
