@@ -21,7 +21,7 @@ function App() {
       }
     }
     checkUser();
-  }, [navigate]);
+  }, []);
 
   useEffect(() => {
     if(items.length === 0) {

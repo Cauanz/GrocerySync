@@ -13,12 +13,12 @@ const router = createBrowserRouter([
     errorElement: <h1>404</h1>,
   },
   {
-    path: "/login",
+    path: "login",
     element: <LoginPage />,
     errorElement: <h1>404</h1>,
   },
   {
-    path: "/register",
+    path: "register",
     element: <RegisterPage />,
     errorElement: <h1>404</h1>,
   }
