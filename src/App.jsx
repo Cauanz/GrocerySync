@@ -1,17 +1,27 @@
 import { Header } from './components/HeaderComponent/Header'
 import './App.css'
 import { useEffect, useState } from 'react';
+import { useHistory } from 'react-router-dom';
 
 import { supabase } from '../src/supabase/client';
 
 
 function App() {
 
-
   const [items, setItems] = useState([]);
   const [newItem, setNewItem] = useState('');
   const [completedItems, setCompletedItems] = useState(0);
+  const history = useHistory();
 
+  useEffect(() => {
+    const checkUser = async () => {
+      const user = supabase.auth.user();
+      if (!user) {
+        history.push('/login');
+      }
+    }
+    checkUser();
+  }, [history]);
 
   useEffect(() => {
     if(items.length === 0) {
