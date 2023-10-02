@@ -1,7 +1,7 @@
 import { Header } from './components/HeaderComponent/Header'
 import './App.css'
 import { useEffect, useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import { supabase } from '../src/supabase/client';
 
@@ -11,17 +11,17 @@ function App() {
   const [items, setItems] = useState([]);
   const [newItem, setNewItem] = useState('');
   const [completedItems, setCompletedItems] = useState(0);
-  const history = useHistory();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const checkUser = async () => {
       const user = supabase.auth.user();
       if (!user) {
-        history.push('/login');
+        navigate.push('/login');
       }
     }
     checkUser();
-  }, [history]);
+  }, [navigate]);
 
   useEffect(() => {
     if(items.length === 0) {
