@@ -19,7 +19,7 @@ export function Header() {
             {menu && (
                <ul className='menu'>
                   {/* <Link to={"/userInfo"} ></Link><li><a href="#">Profile</a></li></Link> */}
-                  <Link to={"/login"} ><li><a href="#">Logout</a></li></Link>
+                  <Link to={"/login"} ><li>Logout</li></Link>
                </ul>
             )}
          </div>

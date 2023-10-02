@@ -1,63 +1,102 @@
 import './LoginPage.css'
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from '../../firebase/firebase';
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
+
+import { supabase } from '../../supabase/client';
 
 export function LoginPage() {
 
    const navigate = useNavigate()
 
-   const [email, setEmail] = useState('')
-   const [password, setPassword] = useState('')
+   const [isLoading, setIsLoading] = useState(false);
 
-   const handleSubmit = async (e) => {
-      e.preventDefault()
+   const overlay = document.querySelector('.overlay');
 
-      /* console.log(email, password) */
+   const formik = useFormik({
+   initialValues: {
+      email: '',
+      password: '',
+   },
+   validationSchema: Yup.object({
+      email: Yup
+      .string()
+      .email('Email inválido')
+      .required('Campo obrigatório'),
 
-      if(email === '' || password === '') {
-         alert('Preencha todos os campos')
+      password: Yup
+      .string()
+      .required('Campo obrigatório'),
+   }),
+
+   onSubmit: async (values) => {
+      try {
+      setIsLoading(true);
+         // eslint-disable-next-line no-unused-vars
+         const { data, error } = await supabase.auth.signInWithPassword({
+         email: values.email,
+         password: values.password,
+      });
+      
+      if (error) {
+         alert(error.message);
       } else {
-         await signInWithEmailAndPassword(auth, email, password)
-         .then((userCredential) => {
-            // Signed in
+         setIsLoading(false);
+         overlay.style.display = 'flex';
 
-            const user = userCredential.user;
-            navigate('/')
-            console.log(user)
+         setTimeout(() => {
+            navigate('/');
+         }, 1000);
 
-         })
-         .catch((error) => {
-            console.log(error.code);
-            console.log(error.message);
-
-            if(error.code == 'auth/invalid-password') {
-               alert('Senha incorreta')
-            } else if(error.code == 'auth/user-not-found') {
-               alert('Usuário não encontrado')
-            } else if(error.code == 'auth/invalid-email') {
-               alert('Usuário não encontrado')
-            } else if(error.code == 'auth/invalid-login-credentials'){
-               alert('Usuário ou senha incorretos')
-            }
-         });
       }
-   }
-
+      } catch (error) {
+      console.error(error.message);
+      }
+   },
+   });
 
    return (
       <div className="login">
          <div className="container">
+
+         <div className="overlay">
+            <div className="overlay-content">
+               <h2>Login Bem-sucedido</h2>
+               <p>Seja bem vindo</p>
+               <img src="./system-outline-31-check.gif" alt="" />
+            </div>
+         </div>
+
             <div className="left">
                <h2>Simple and Fast</h2>
             </div>
             <div className="right">
-            <form>
+            <form onSubmit={formik.handleSubmit}>
                <h1>Login</h1>
-               <input className='Email' type="text" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-               <input className='Password' type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)}required />
-               <button type="submit" onClick={handleSubmit}>Login</button>
+               <input 
+               className={formik.touched.email && formik.errors.email ? 'error' : ''}
+               type="text"
+               placeholder="Email"
+               {...formik.getFieldProps('email')}
+               />
+               {formik.touched.email && formik.errors.email ? (
+               <div className="errorMessage">{formik.errors.email}</div>
+               ) : null}
+
+               <input 
+               className={formik.touched.password && formik.errors.password ? 'error' : ''}
+               type="password"
+               placeholder="Password"
+               {...formik.getFieldProps('password')}
+               />
+               {formik.touched.password && formik.errors.password ? (
+               <div className="errorMessage">{formik.errors.password}</div>
+               ) : null}
+
+               <button type="submit" disabled={isLoading}>
+               {isLoading ? 'Carregando...' : 'Entrar'}
+               </button>
 
                <div className="otherLoginWays">
                   <p>Or login with</p>

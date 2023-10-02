@@ -187,3 +187,16 @@ main img {
 .Item > span {
   color: #fff;
 }
+
+
+@media (max-width: 768px) {
+  .content {
+    width: 100%;
+  }
+
+  .resumoCompras {
+    height: 40px;
+    width: 90%;
+    margin: 0 auto;
+  }
+}
