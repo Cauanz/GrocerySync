@@ -1,14 +1,27 @@
 import './Header.css';
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { supabase } from '../../supabase/client';
+import { Link, useNavigate } from 'react-router-dom';
 
 export function Header() {
+
+   const navigate = useNavigate();
 
    const [menu, setMenu] = useState(false);
 
    const toggleMenu = () => {
       setMenu(!menu);
    }
+
+   async function signOut() {
+      const { error } = await supabase.auth.signOut()
+
+      if (error) {
+         console.log('Erro ao sair:', error.message)
+      } else {
+         navigate('/login')
+      }
+    }
 
    return (
       <header className="header">
@@ -19,7 +32,7 @@ export function Header() {
             {menu && (
                <ul className='menu'>
                   {/* <Link to={"/userInfo"} ></Link><li><a href="#">Profile</a></li></Link> */}
-                  <Link to={"/login"} ><li>Logout</li></Link>
+                  <button onClick={signOut}><li>Logout</li></button>
                </ul>
             )}
          </div>

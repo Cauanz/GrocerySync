@@ -16,9 +16,9 @@ function App() {
   useEffect(() => {
     const checkUser = async () => {
       const { data: { user } } = await supabase.auth.getUser();
-      if (user != null) {
+      console.log(user);
+      if (user == null) {
         navigate('/login');
-        console.log('Funciona trouxa')
       }
     }
     checkUser();
