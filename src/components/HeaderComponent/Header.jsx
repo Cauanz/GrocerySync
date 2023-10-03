@@ -21,7 +21,7 @@ export function Header() {
       } else {
          navigate('/login')
       }
-    }
+   }
 
    return (
       <header className="header">

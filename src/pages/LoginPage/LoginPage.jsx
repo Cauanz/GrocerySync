@@ -41,6 +41,7 @@ export function LoginPage() {
       
       if (error) {
          alert(error.message);
+         setIsLoading(false);
       } else {
          setIsLoading(false);
          overlay.style.display = 'flex';
