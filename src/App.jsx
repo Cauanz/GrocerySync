@@ -17,7 +17,7 @@ function App() {
     const checkUser = async () => {
       const user = supabase.auth.user();
       if (!user) {
-        navigate.push('/login');
+        navigate('/login');
       }
     }
     checkUser();
